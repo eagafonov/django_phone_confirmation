@@ -14,7 +14,11 @@ setup(
     keywords='django cell phone confirmation',
     author_email='ricardo@salamandra.cc',
     long_description=open('README.md').read(),
-    install_requires=['django_rest', 'django-sendsms==0.2.3'],
+    install_requires=[
+        'django_rest',
+        'django-sendsms==0.2.3',
+        'django-phonenumber-field',
+    ],
     include_package_data=True,
     url='https://github.com/ricardosasilva/django_phone_confirmation',
     classifiers=[
