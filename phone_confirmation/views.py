@@ -17,7 +17,7 @@ class ConfirmationView(generics.CreateAPIView):
 
 
 class ActivationKeyView(APIView):
-    throttle_scope = 'phone-number-confirmation'
+    throttle_scope = 'phone-number-activation-key'
 
     def post(self, request, *args, **kwargs):
         serializer = ActivationKeySerializer(data=request.data)
@@ -28,7 +28,7 @@ class ActivationKeyView(APIView):
 
 
 class GetActivationKeyView(APIView):
-    throttle_scope = 'phone-number-confirmation'
+    throttle_scope = 'phone-number-activation-key'
 
     def get(self, request, activation_key, *args, **kwargs):
         try:
