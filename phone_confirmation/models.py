@@ -16,11 +16,11 @@ from sendsms import api
 
 phone_settings = getattr(settings, 'PHONE_CONFIRMATION', {})
 
-SALT = getattr(phone_settings, 'SALT', 'phonenumber')
-ACTIVATION_MINUTES = getattr(phone_settings, 'ACTIVATION_MINUTES', 15)
-SMS_TEMPLATE = getattr(phone_settings, 'SMS_TEMPLATE', 'phone_confirmation/message.txt')
-FROM_NUMBER = getattr(phone_settings, 'FROM_NUMBER', '')
-MAX_CONFIRMATIONS = getattr(phone_settings, 'MAX_CONFIRMATIONS', 10)
+SALT = phone_settings.get('SALT', 'phonenumber')
+ACTIVATION_MINUTES = phone_settings.get('ACTIVATION_MINUTES', 15)
+SMS_TEMPLATE = phone_settings.get('SMS_TEMPLATE', 'phone_confirmation/message.txt')
+FROM_NUMBER = phone_settings.get('FROM_NUMBER', '')
+MAX_CONFIRMATIONS = phone_settings.get('MAX_CONFIRMATIONS', 10)
 
 
 def random_confirmation_code():
