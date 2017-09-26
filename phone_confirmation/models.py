@@ -1,6 +1,8 @@
 from __future__ import unicode_literals
 
 import random
+import logging
+
 from datetime import timedelta
 
 from django.conf import settings
@@ -14,6 +16,8 @@ from phonenumber_field.modelfields import PhoneNumberField
 
 from sendsms import api
 
+log = logging.getLogger(__name__)
+
 phone_settings = getattr(settings, 'PHONE_CONFIRMATION', {})
 
 SALT = phone_settings.get('SALT', 'phonenumber')
@@ -21,6 +25,8 @@ ACTIVATION_MINUTES = phone_settings.get('ACTIVATION_MINUTES', 15)
 SMS_TEMPLATE = phone_settings.get('SMS_TEMPLATE', 'phone_confirmation/message.txt')
 FROM_NUMBER = phone_settings.get('FROM_NUMBER', '')
 MAX_CONFIRMATIONS = phone_settings.get('MAX_CONFIRMATIONS', 10)
+SILENT_CONFIRMATIONS_FILTER = phone_settings.get('SILENT_CONFIRMATIONS_FILTER', None)
+
 
 
 def random_confirmation_code():
@@ -87,9 +93,17 @@ class PhoneConfirmation(models.Model):
         message = render_to_string(template_name=SMS_TEMPLATE,
                                    context={"code": self.code},
                                    request=request)
+
+        to=str(self.phone_number)
+
+        if callable(SILENT_CONFIRMATIONS_FILTER) and \
+            SILENT_CONFIRMATIONS_FILTER(to) is True:
+                log.debug("Filtered phone confirmation SMS to:%s text:%s", to, message)
+                return
+
         api.send_sms(body=message,
                      from_phone=FROM_NUMBER,
-                     to=[str(self.phone_number)])
+                     to=[to])
 
 
 @receiver(post_save, sender=PhoneConfirmation)
